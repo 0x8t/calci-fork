@@ -6,7 +6,7 @@ body {
     background-color: #f4f4f4;
 }
 .calculate {
-    width: 350px;
+    width: 450px;
     background: white;
     padding: 10px;
     border-radius: 50px;
@@ -35,4 +35,9 @@ body {
 .option button.operator {
     background: #f9a825;
     color: white;
+}
+.option button.operator_different {
+    background: #f9a825;
+    color: white;
+    width: 43%
 }
