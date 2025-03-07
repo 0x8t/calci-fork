@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="calculate">
+        <input type="text" class="display" id = "display"disabled>
+        <div class="option">
+            <button onclick="Clear()">C</span>
+            <button onclick="Display_d('9')">9</span>
+            <button onclick="Display_d('8')">8</span>
+            <button onclick="Display_d('7')">7</span>
+            <button class="operator" onclick="Display_d('+')">+</span>
+            <button onclick="Display_d('6')">6</span>
+            <button onclick="Display_d('5')">5</span>
+            <button onclick="Display_d('4')">4</span>
+            <button class="operator" onclick="Display_d('-')">-</span>
+            <button onclick="Display_d('3')">3</span>
+            <button onclick="Display_d('2')">2</span>
+            <button onclick="Display_d('1')">1</span>
+            <button class="operator" onclick="Display_d('*')">*</span>
+            <button onclick="Solve()">=</span>
+            <button onclick="Display_d('0')">0</span>
+            <button onclick="Display_d('.')">.</span>
+            <button class="operator" onclick="Display_d('/')">/</span>
+            <button class="operator" onclick="Display_d('sin')">sin</span>
+            <button class="operator" onclick="Display_d('cos')">cos</span>
+            <button class="operator" onclick="Display_d('tan')">tan</span>
+            <script src="function.js"></script>
+        </div>
+    </div>
+    <script src="function.js"></script>
+</body>
+</html>
