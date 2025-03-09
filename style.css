@@ -3,24 +3,74 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #f4f4f4;
+    background-color: #292727;
 }
 .calculate {
-    width: 450px;
-    background: white;
-    padding: 10px;
-    border-radius: 50px;
+    width: 480px;
+    background: rgb(0, 0, 0);
+    padding: 5px;
+    border-radius: 5px;
     box-shadow: 0 0 10 10px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
-.display {
+.container 
+{
+    width: 5.8%;
+    height:5%;
+    position:absolute;
+}
+.displayAccuracy {
+    /* position: absolute; */
     width: 100%;
-    height: 50px;
+    height: 115%;
+    margin-left:26px;
+    margin-top: 6px;
+    font-size: 1.1em;
+    text-align: right;
+    cursor: pointer;
+    border: 1px solid #f9a825;
+    background: #121212;
+    color:#ccc;
+    border-radius: 5px;
+}
+label 
+{
+    position: absolute;
+    background: #121212;
+    color: #fff;
+    left: 1.0em;
+    top: -0.3em;
+    margin: 20px;
+    margin-bottom: 50px;
+    cursor: text;
+    transition: top 350ms ease-in,
+    font-size 350ms ease-in;
+}
+.displayAccuracy:hover
+{
+    color:rgba(255,255,255,0.5);
+}
+.displayAccuracy:focus
+{
+    border: 2px solid #00ffff;
+}
+input[type="text"]:focus~label,
+.displayAccuracy:not(:placeholder-shown)
+.displayAccuracy:not(:focus)~label{
+    top: -0.7em;
+    font-size: 0.65rem;
+    padding: 0 0.125em;
+}
+.display {
+    width: 85%;
+    height: 70px;
     font-size: 1.5em;
     text-align: right;
+    border-radius: 10px;
     margin-bottom: 10px;
     padding: 5px;
-    border: 1px solid #ccc;
+    background: #9e9797;
+    border: 1px solid #352f2f;
 }
 .option button {
     width: 20%;
@@ -35,6 +85,12 @@ body {
 .option button.operator {
     background: #f9a825;
     color: white;
+}
+.option button.operator_equal {
+    background: #f9a825;
+    color: white;
+    width: 43%;
+    margin-right: -105px;
 }
 .option button.operator_different {
     background: #f9a825;

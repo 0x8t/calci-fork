@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="calculate">
-        <input type="text" class="display" id = "display"disabled>
+        <input type="text" class="display" id = "display">
         <div class="option">
             <button onclick="Clear_char()">DELETE</button>
             <button onclick="Display_d('9')">9</button>
@@ -22,8 +22,8 @@
             <button onclick="Display_d('3')">3</button>
             <button onclick="Display_d('2')">2</button>
             <button onclick="Display_d('1')">1</button>
-            <button class="operator" onclick="Display_d('*')">*</button>
-            <button onclick="Solve()">=</button>
+            <button class="operator" onclick="Display_d('x')">x</button>
+            <button class="operator" onclick="Display_d('e')">e</button>
             <button onclick="Display_d('0')">0</button>
             <button onclick="Display_d('.')">.</button>
             <button class="operator" onclick="Display_d('/')">/</button>
@@ -32,14 +32,20 @@
             <button class="operator" onclick="Display_d('tan(')">tan</button>
             <button class="operator" onclick="Display_d('(')">(</button>
             <button class="operator" onclick="Display_d(')')">)</button>
-            <button class="operator" onclick="Square()">x²</button>
-            <button class="operator" onclick="Root()">√</button>
-            <button class="operator" onclick="Root()">x<sup>y</sup></button>
+            <button class="operator" onclick="Display_d('()^(2)')">x<sup>2</sup></button>
+            <button class="operator" onclick="Display_d('(2)√')"><sup>2</sup>√y</button>
+            <button class="operator" onclick="Display_d('()^')">x<sup>y</sup></button>
             <button class="operator" onclick="Display_d('%')">%</button>
-            <button class="operator_different" onclick="Clear()">C</button>
-            <script src="function.js"></script>
+            <button class="operator" onclick="Display_d('()√')"><sup>x</sup>√y</button>
+            <button class="operator" onclick="Clear()">C</button>
+            <div class="container">
+                <input type="text" class="displayAccuracy" autocomplete="off" id = "displayAccuracy"/>
+                <label for="Decimal Accuracy">Decimal Accuracy</label>
+            </div>
+            <button class="operator" onclick="Display_d('log(b)()')">log<sub>x</sub>y</button>
+            <button class="operator_equal" onclick="Solve()">=</button>
+            <script src="/function.js"></script>
         </div>
     </div>
-    <script src="function.js"></script>
 </body>
 </html>
