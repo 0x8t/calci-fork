@@ -23,9 +23,11 @@ function Evaluate(exp)
         let tanValue = Math.tan(radians);
     
         // Handle large values (like tan(90) which approaches infinity)
-        if (!isFinite(tanValue)) {
+        if (!isFinite(tanValue)) 
+        {
             document.getElementById('display').value="Math Error!";
-            process.exit(0);
+            newTrue = true;
+            return;
         }
     
         return tanValue.toFixed(decimal_accuracy);
@@ -36,9 +38,11 @@ function Evaluate(exp)
         base = parseFloat(base);
         num = parseFloat(num);
     
-        if (base <= 0 || base === 1 || num <= 0) {
+        if (base <= 0 || base === 1 || num <= 0) 
+        {
             document.getElementById('display').value="log undefined!"; // Logarithm is undefined for these cases
-            process.exit(0);
+            newTrue = true;
+            return;
         }
     
         let logValue = Math.log(num) / Math.log(base);
@@ -48,9 +52,11 @@ function Evaluate(exp)
         num1 = parseFloat(num1);
         num2 = parseFloat(num2);
     
-        if (num2 === 0) {
+        if (num2 === 0) 
+        {
             document.getElementById('display').value="Division by 0!"; // Handling division by zero
-            process.exit(0);
+            newTrue = true;
+            return;
         }
     
         let divValue = num1 / num2;
@@ -77,7 +83,8 @@ function Evaluate(exp)
         if (num2 === 0) 
         {
             document.getElementById('display').value="Modulus by 0!"; // Handling division by zero
-            process.exit(0);
+            newTrue = true;
+            return;
         }
         let modValue = num1 % num2;
         return modValue.toFixed(decimal_accuracy);
@@ -145,6 +152,7 @@ function Clear_char()
 //function which will run on pressing '='
 function Solve() 
 {
+    Set_accuracy();
     try {
         let stack=[];
         let subpart="";
@@ -164,9 +172,16 @@ function Solve()
             else if(expression[i]==')')
             {
                 brac_count--;
+                if(brac_count<0)
+                {
+                    document.getElementById('display').value = "Extra Closing Parentheses Detected";
+                    newTrue = true;
+                    return;
+                }
             }
             i++;
         }
+
         while(brac_count)
         {
             expression+=')';
@@ -174,7 +189,7 @@ function Solve()
         }
 
         //replacing e with Math.E
-        expression=expression.replace(new RegExp(Math.E.toFixed(decimal_accuracy), "g"), "e");
+        expression = expression.replace(/e/g, Math.E.toFixed(decimal_accuracy));
 
         //evaluating expression
         i=stack[stack.length-1];
@@ -184,6 +199,11 @@ function Solve()
             {
                 subpart=expression.substring(stack[stack.length-1],i+1);
                 valpart=Evaluate(expression.substring(stack[stack.length-1],i+1));
+                if(valpart==undefined)
+                {
+                    newTrue = true;
+                    return;
+                }
                 expression=expression.replace(subpart,valpart);     
                 stack.pop();
                 if(stack.length!=0)
@@ -197,6 +217,8 @@ function Solve()
         {
             expression="("+expression+")"
             expression=Evaluate(expression);
+            if(expression==undefined)
+                return;
         }while(Number(expression)==NaN)
 
 
@@ -208,5 +230,33 @@ function Solve()
     } catch {
         document.getElementById('display').value = 'Error';
         newTrue = true;
+    }
+}
+
+//function to handle enter key for '='
+function Enter(event) 
+{
+    if (event.key === "Enter") 
+    {
+        Solve();
+    }
+}
+
+//function to handle decimal accuracy button
+function Set_accuracy() 
+{
+    let input=parseInt(document.getElementById('displayAccuracy').value);
+    if(input>=0) 
+    {
+        decimal_accuracy=input;
+    }
+    else if(document.getElementById('displayAccuracy').value=="")
+    {
+        decimal_accuracy=2;
+    }
+    else
+    {
+        document.getElementById('displayAccuracy').value="!!!";
+        decimal_accuracy=2;
     }
 }
