@@ -2,6 +2,24 @@ let newTrue = false;
 let brac_count=0;
 let decimal_accuracy=2;
 
+//for counting no. of times check's elements occur in exp
+function fun_count(exp,check)
+{
+    let count=0;
+    for(let j=0;j<check.length;j++)
+    {
+        for(let i=0;i<exp.length-check[j].length;i++)
+        {        
+            if(exp.substring(i,i+check[j].length)==check[j])
+            {
+                count++;
+                i+=check[j].length;
+            }
+        }
+    }
+    return count;
+}
+
 //function checking whether a character is eithernumber or decimal
 function isDigit(char) 
 {
@@ -12,99 +30,122 @@ function isDigit(char)
 function Evaluate(exp)
 {
     let new_exp=exp.substring(1,exp.length-1);
-    new_exp=new_exp.replace(/(\d+(\.\d+)?)\^(\d+(\.\d+)?)/g, (match, base, _, exponent) => {
-        return parseFloat(Math.pow(parseFloat(base), parseFloat(exponent)).toFixed(decimal_accuracy));});
-    new_exp=new_exp.replace(/(\d+(\.\d+)?)\√(\d+(\.\d+)?)/g, (match, base, _, exponent) => {
-        return parseFloat(Math.pow(parseFloat(exponent), parseFloat(1/base)).toFixed(decimal_accuracy));});
-    new_exp=new_exp.replace(/sin(\d+(\.\d+)?)/g, (match, num) => {
-        return Math.sin(parseFloat(num) * (Math.PI / 180)).toFixed(decimal_accuracy); });
-    new_exp=new_exp.replace(/tan(\d+(\.\d+)?)/g, (match, num) => {
-        let radians = parseFloat(num) * (Math.PI / 180);
-        let tanValue = Math.tan(radians);
+    let fun_times=fun_count(new_exp,['√','^'])
+    for(let j=0;j<fun_times;j++)
+    {
+        new_exp=new_exp.replace(/(\d+(\.\d+)?)\^(\d+(\.\d+)?)/g, (match, base, _, exponent) => {
+            return parseFloat(Math.pow(parseFloat(base), parseFloat(exponent)).toFixed(decimal_accuracy));});
+        new_exp=new_exp.replace(/(\d+(\.\d+)?)\√(\d+(\.\d+)?)/g, (match, base, _, exponent) => {
+            return parseFloat(Math.pow(parseFloat(exponent), parseFloat(1/base)).toFixed(decimal_accuracy));});
+    }
     
-        // Handle large values (like tan(90) which approaches infinity)
-        if (!isFinite(tanValue)) 
-        {
-            document.getElementById('display').value="Math Error!";
-            newTrue = true;
-            return;
-        }
+    fun_times=fun_count(new_exp,['sin','cos','tan','log'])
+    for(let j=0;j<fun_times;j++)
+    {
+        new_exp=new_exp.replace(/sin(\d+(\.\d+)?)/g, (match, num) => {
+            return Math.sin(parseFloat(num) * (Math.PI / 180)).toFixed(decimal_accuracy); });
+        new_exp=new_exp.replace(/tan(\d+(\.\d+)?)/g, (match, num) => {
+            let radians = parseFloat(num) * (Math.PI / 180);
+            let tanValue = Math.tan(radians);
+        
+            // Handle large values (like tan(90) which approaches infinity)
+            if (!isFinite(tanValue)) 
+            {
+                document.getElementById('display').value="Math Error!";
+                newTrue = true;
+                return;
+            }
+        
+            return tanValue.toFixed(decimal_accuracy);
+        });
+        new_exp=new_exp.replace(/cos(\d+(\.\d+)?)/g, (match, num) => {
+            return Math.cos(parseFloat(num) * (Math.PI / 180)).toFixed(decimal_accuracy); });
+        new_exp=new_exp.replace(/log(\d+(\.\d+)?)b(\d+(\.\d+)?)/g, (match, base, _, num) => {
+            base = parseFloat(base);
+            num = parseFloat(num);
+        
+            if (base <= 0 || base === 1 || num <= 0) 
+            {
+                document.getElementById('display').value="log undefined!"; // Logarithm is undefined for these cases
+                newTrue = true;
+                return;
+            }
+        
+            let logValue = Math.log(num) / Math.log(base);
+            return logValue.toFixed(decimal_accuracy);
+        });
+    }
+
+    fun_times=fun_count(new_exp,['/','%'])
+    for(let j=0;j<fun_times;j++)
+    {
+        new_exp=new_exp.replace(/(\d+(\.\d+)?)\/(\d+(\.\d+)?)/g, (match, num1, _, num2) => {
+            num1 = parseFloat(num1);
+            num2 = parseFloat(num2);
+        
+            if (num2 === 0) 
+            {
+                document.getElementById('display').value="Division by 0!"; // Handling division by zero
+                newTrue = true;
+                return;
+            }
+        
+            let divValue = num1 / num2;
+            return divValue.toFixed(decimal_accuracy);
+        });
+        new_exp=new_exp.replace(/(\d+(\.\d+)?)\%(\d+(\.\d+)?)/g, (match, num1, _, num2) => {
+            num1 = parseFloat(num1);
+            num2 = parseFloat(num2);
+        
+            if (num2 === 0) 
+            {
+                document.getElementById('display').value="Modulus by 0!"; // Handling division by zero
+                newTrue = true;
+                return;
+            }
+            let modValue = num1 % num2;
+            return modValue.toFixed(decimal_accuracy);
+        });
+    }
     
-        return tanValue.toFixed(decimal_accuracy);
-    });
-    new_exp=new_exp.replace(/cos(\d+(\.\d+)?)/g, (match, num) => {
-        return Math.cos(parseFloat(num) * (Math.PI / 180)).toFixed(decimal_accuracy); });
-    new_exp=new_exp.replace(/log(\d+(\.\d+)?)b(\d+(\.\d+)?)/g, (match, base, _, num) => {
-        base = parseFloat(base);
-        num = parseFloat(num);
-    
-        if (base <= 0 || base === 1 || num <= 0) 
-        {
-            document.getElementById('display').value="log undefined!"; // Logarithm is undefined for these cases
-            newTrue = true;
-            return;
-        }
-    
-        let logValue = Math.log(num) / Math.log(base);
-        return logValue.toFixed(decimal_accuracy);
-    });
-    new_exp=new_exp.replace(/(\d+(\.\d+)?)\/(\d+(\.\d+)?)/g, (match, num1, _, num2) => {
-        num1 = parseFloat(num1);
-        num2 = parseFloat(num2);
-    
-        if (num2 === 0) 
-        {
-            document.getElementById('display').value="Division by 0!"; // Handling division by zero
-            newTrue = true;
-            return;
-        }
-    
-        let divValue = num1 / num2;
-        return divValue.toFixed(decimal_accuracy);
-    });
-    new_exp=new_exp.replace(/(\d+(\.\d+)?)\x(\d+(\.\d+)?)/g, (match, num1, _, num2) => {
-        num1 = parseFloat(num1);
-        num2 = parseFloat(num2);
-    
-        let mulValue = num1 * num2;
-        return mulValue.toFixed(decimal_accuracy);
-    });
-    new_exp=new_exp.replace(/(\d+(\.\d+)?)\*(\d+(\.\d+)?)/g, (match, num1, _, num2) => {
-        num1 = parseFloat(num1);
-        num2 = parseFloat(num2);
-    
-        let mulValue = num1 * num2;
-        return mulValue.toFixed(decimal_accuracy);
-    });
-    new_exp=new_exp.replace(/(\d+(\.\d+)?)%(\d+(\.\d+)?)/g, (match, num1, _, num2) => {
-        num1 = parseFloat(num1);
-        num2 = parseFloat(num2);
-    
-        if (num2 === 0) 
-        {
-            document.getElementById('display').value="Modulus by 0!"; // Handling division by zero
-            newTrue = true;
-            return;
-        }
-        let modValue = num1 % num2;
-        return modValue.toFixed(decimal_accuracy);
-    });
-    new_exp=new_exp.replace(/(\d+(\.\d+)?)\+(\d+(\.\d+)?)/g, (match, num1, _, num2) => {
-        num1 = parseFloat(num1);
-        num2 = parseFloat(num2);
-    
-        let sumValue = num1 + num2;
-        return sumValue.toFixed(decimal_accuracy);
-    });
-    new_exp=new_exp.replace(/(\d+(\.\d+)?)\-(\d+(\.\d+)?)/g, (match, num1, _, num2) => {
-        num1 = parseFloat(num1);
-        num2 = parseFloat(num2);
-    
-        let diffValue = num1 - num2;
-        return diffValue.toFixed(decimal_accuracy);
-    });
-    
-    console.log(new_exp)
+    fun_times=fun_count(new_exp,['*','x'])
+    for(let j=0;j<fun_times;j++)
+    {
+        new_exp=new_exp.replace(/(\d+(\.\d+)?)\x(\d+(\.\d+)?)/g, (match, num1, _, num2) => {
+            num1 = parseFloat(num1);
+            num2 = parseFloat(num2);
+        
+            let mulValue = num1 * num2;
+            return mulValue.toFixed(decimal_accuracy);
+        });
+        new_exp=new_exp.replace(/(\d+(\.\d+)?)\*(\d+(\.\d+)?)/g, (match, num1, _, num2) => {
+            num1 = parseFloat(num1);
+            num2 = parseFloat(num2);
+        
+            let mulValue = num1 * num2;
+            return mulValue.toFixed(decimal_accuracy);
+        });
+    }
+
+    fun_times=fun_count(new_exp,['+','-'])
+    for(let j=0;j<fun_times;j++)
+    {
+        new_exp=new_exp.replace(/(\d+(\.\d+)?)\+(\d+(\.\d+)?)/g, (match, num1, _, num2) => {
+            num1 = parseFloat(num1);
+            num2 = parseFloat(num2);
+        
+            let sumValue = num1 + num2;
+            return sumValue.toFixed(decimal_accuracy);
+        });
+        new_exp=new_exp.replace(/(\d+(\.\d+)?)\-(\d+(\.\d+)?)/g, (match, num1, _, num2) => {
+            num1 = parseFloat(num1);
+            num2 = parseFloat(num2);
+        
+            let diffValue = num1 - num2;
+            return diffValue.toFixed(decimal_accuracy);
+        });
+    }
+
     return(new_exp);
 }
 
