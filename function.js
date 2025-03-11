@@ -51,10 +51,9 @@ function Add_mul_brac(exp)
     let exp_brac=exp;
     for(let i=0;i<exp_brac.length-1;i++)
     {
-        if((exp_brac.substring(i,i+2)==")(" && exp_brac[i-1]!="b")||(exp_brac[i]==')'&&isDigit(exp_brac[i+1]))||(exp_brac[i+1]=='('&&isDigit(exp_brac[i])))
+        if((exp_brac.substring(i,i+2)==")(" && exp_brac[i-1]!="b")||(exp_brac[i]==')'&&isDigit(exp_brac[i+1])&&exp_brac[i-1]!='b')||(exp_brac[i+1]=='('&&isDigit(exp_brac[i]))||((exp_brac[i]==')'||isDigit(exp_brac[i]))&&(exp_brac.substring(i+1,i+4)=="sin"||exp_brac.substring(i+1,i+4)=="cos"||exp_brac.substring(i+1,i+4)=="tan"||exp_brac.substring(i+1,i+4)=="log")))
         {
             exp_brac=exp_brac.substring(0,i+1)+'x'+exp_brac.substring(i+1,exp_brac.length);
-            i+=1;
         }
     }
     return exp_brac;
@@ -63,6 +62,7 @@ function Add_mul_brac(exp)
 //function for evaluating each bracket
 function Evaluate(exp)
 {
+
     let new_exp=exp.substring(1,exp.length-1);
     let fun_times=fun_count(new_exp,['√','^'])
     
@@ -114,10 +114,12 @@ function Evaluate(exp)
             return parseFloat(result.toFixed(decimal_accuracy));
         });        
     }
+
     
     fun_times=fun_count(new_exp,['sin','cos','tan','log'])
     for(let j=0;j<fun_times;j++)
     {
+
         new_exp=new_exp.replace(/sin-?\d+(\.\d+)?/g, (match) => {
             let num = match.replace("sin", "");
             return Math.sin(parseFloat(num) * (Math.PI / 180)).toFixed(decimal_accuracy); });
@@ -146,24 +148,24 @@ function Evaluate(exp)
         });
 
 
-        if (/log(-?\d+(\.\d+)?)b(-?\d+(\.\d+)?)/.test(new_exp)) {
+        if (/log-?\d+(\.\d+)?b-?\d+(\.\d+)?/.test(new_exp)) {
             new_exp = new_exp.replace(/log(-?\d+(\.\d+)?)b(-?\d+(\.\d+)?)/g, (match, base, _, num) => {
                 base = parseFloat(base);
                 num = parseFloat(num);
-        
-                // Check for invalid logarithm cases
+            newTrue=false;
+    
                 if (base <= 0 || base === 1 || num <= 0) {
-                    document.getElementById('display').value = "log undefined!"; // Display error
+
+                    document.getElementById('display').value = "log undefined!";
                     newTrue = true;
-                    return match; // Return the original expression unchanged (prevents 'undefined')
+                    return match; // Return the original expression unchanged
                 }
         
                 let logValue = Math.log(num) / Math.log(base);
                 return parseFloat(logValue.toFixed(decimal_accuracy));
             });
-        
-            if(newTrue)
-                return; // **Stops execution immediately after handling logs**
+
+            if (newTrue) return; // **Stops execution if log is undefined**
         }
         
     }
@@ -245,6 +247,18 @@ function Evaluate(exp)
     return(new_exp);
 }
 
+//function to add + sign before every minus
+function Plus_add(exp)
+{
+    let new_update=exp;
+    for(let i=0;i<new_update.length;i++)
+    {
+        if(new_update[i]=='-'&&new_update[i-1]!='+'&&i!=0)
+            new_update=new_update.substring(0,i)+'+'+new_update.substring(i,);
+    }
+    return new_update;
+}
+
 //function controlling main display
 function Display_d(value) 
 {
@@ -289,6 +303,7 @@ function Clear_char()
 //function which will run on pressing '='
 function Solve() 
 {
+    
     Set_accuracy();
     try {
         let stack=[];
@@ -296,6 +311,13 @@ function Solve()
         let valpart="";
         let display=document.getElementById('display')
         let expression=display.value;
+        if(newTrue)
+            Clear();    
+
+        //to remove plus from start of expression
+        if(expression[0]=='+')
+            expression=expression.substring(1,);
+
 
         //closing all opened brackets
         let i=0;
@@ -326,7 +348,10 @@ function Solve()
 
         //replacing e with Math.E
         if(!newTrue)
-            expression = expression.replace(/e/g, Math.E.toFixed(decimal_accuracy));
+            expression = expression.replace(/e/g, `(${Math.E})`);
+
+        //adding + before every minus
+        expression=Plus_add(expression);
 
         //removing unnecessary + signs
         expression=Rem_plus(expression);
@@ -366,16 +391,15 @@ function Solve()
             }
             i++;
         }
-        do
+        
+        expression="("+expression+")"
+        expression=Evaluate(expression);
+        if(expression==undefined)
         {
-            expression="("+expression+")"
-            expression=Evaluate(expression);
-            if(expression==undefined)
-            {
-                newTrue=true;
-                return;
-            }
-        }while(Number(expression)==NaN)
+            newTrue=true;
+            return;
+        }
+        
 
 
         //printing expression
