@@ -76,14 +76,7 @@ function Evaluate(exp)
             if (base < 0 && !Number.isInteger(exponent)) {
                 return "Math Error!"; // Negative base raised to non-integer exponent results in complex number
             }
-        
-            // Correctly handle cases like (-27)^0.33 (cube root of -27)
-            let result;
-            if (base < 0 && Number.isInteger(1 / exponent)) {
-                result = -Math.pow(-base, exponent); // Convert base to positive, compute, then negate
-            } else {
-                result = Math.pow(base, exponent);
-            }
+            result = Math.pow(base, exponent);
         
             return parseFloat(result.toFixed(decimal_accuracy));
         });        
@@ -112,7 +105,8 @@ function Evaluate(exp)
             }
         
             return parseFloat(result.toFixed(decimal_accuracy));
-        });        
+        });     
+           
     }
 
     
@@ -123,7 +117,7 @@ function Evaluate(exp)
         new_exp=new_exp.replace(/sin-?\d+(\.\d+)?/g, (match) => {
             let num = match.replace("sin", "");
             return Math.sin(parseFloat(num) * (Math.PI / 180)).toFixed(decimal_accuracy); });
-
+        
         
         new_exp=new_exp.replace(/tan-?\d+(\.\d+)?/g, (match) => {
             let num = match.replace("tan", "");
@@ -131,7 +125,7 @@ function Evaluate(exp)
             let tanValue = Math.tan(radians);
         
             // Handle large values (like tan(90) which approaches infinity)
-            if (!isFinite(tanValue)) 
+            if (parseFloat(num)==90) 
             {
                 document.getElementById('display').value="Math Error!";
                 newTrue = true;
@@ -140,6 +134,7 @@ function Evaluate(exp)
         
             return tanValue.toFixed(decimal_accuracy);
         });
+        if (newTrue) return;
 
 
         new_exp = new_exp.replace(/cos-?\d+(\.\d+)?/g, (match) => {
@@ -177,7 +172,7 @@ function Evaluate(exp)
             num1 = parseFloat(num1);
             num2 = parseFloat(num2);
         
-            if (num2 === 0) {
+            if (num2 == 0) {
                 document.getElementById('display').value = "Division by 0!"; // Handling division by zero
                 newTrue = true;
                 return match; // **Prevents "undefined" from appearing in new_exp**
@@ -186,12 +181,13 @@ function Evaluate(exp)
             let divValue = num1 / num2;
             return divValue.toFixed(decimal_accuracy);
         });
+        if (newTrue) return;
         
         new_exp = new_exp.replace(/(-?\d+(\.\d+)?)\%(-?\d+(\.\d+)?)/g, (match, num1, _, num2) => {
             num1 = parseFloat(num1);
             num2 = parseFloat(num2);
         
-            if (num2 === 0) {
+            if (num2 == 0) {
                 document.getElementById('display').value = "Modulus by 0!"; // Handling modulus by zero
                 newTrue = true;
                 return match; // **Prevents "undefined" from appearing in new_exp**
@@ -200,6 +196,7 @@ function Evaluate(exp)
             let modValue = num1 % num2;
             return modValue.toFixed(decimal_accuracy);
         });
+        if (newTrue) return;
         
     }
     
