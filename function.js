@@ -20,10 +20,44 @@ function fun_count(exp,check)
     return count;
 }
 
+//function to remove extra plus
+function Rem_plus(exp)
+{
+    let exp_NoPlus=exp;
+    let operators = ['+','-','x','*','/','%','^','√','sin','cos','tan','log','(','b)','b','b)(']
+    for(let j=0;j<operators.length;j++)
+    {
+        for(let i=0;i<exp_NoPlus.length;i++)
+        {
+            if((exp_NoPlus.substring(i,i+operators[j].length)==operators[j]&&exp_NoPlus[i+operators[j].length]=="+")||i==0&&exp_NoPlus[i]=='+')
+            {
+                exp_NoPlus=exp_NoPlus.substring(0,i+operators[j].length)+exp_NoPlus.substring(i+operators[j].length+1,exp_NoPlus.length);
+                i+=operators[j].length-1;
+            }
+        }
+    }
+    return exp_NoPlus;
+}
+
 //function checking whether a character is eithernumber or decimal
 function isDigit(char) 
 {
     return (char >= '0' && char <= '9')||char=='.';
+}
+
+//function to add multiplication between 2 bracket closing and just opening without any operator
+function Add_mul_brac(exp)
+{
+    let exp_brac=exp;
+    for(let i=0;i<exp_brac.length-1;i++)
+    {
+        if((exp_brac.substring(i,i+2)==")(" && exp_brac[i-1]!="b")||(exp_brac[i]==')'&&isDigit(exp_brac[i+1]))||(exp_brac[i+1]=='('&&isDigit(exp_brac[i])))
+        {
+            exp_brac=exp_brac.substring(0,i+1)+'x'+exp_brac.substring(i+1,exp_brac.length);
+            i+=1;
+        }
+    }
+    return exp_brac;
 }
 
 //function for evaluating each bracket
@@ -31,20 +65,66 @@ function Evaluate(exp)
 {
     let new_exp=exp.substring(1,exp.length-1);
     let fun_times=fun_count(new_exp,['√','^'])
+    
     for(let j=0;j<fun_times;j++)
     {
-        new_exp=new_exp.replace(/(\d+(\.\d+)?)\^(\d+(\.\d+)?)/g, (match, base, _, exponent) => {
-            return parseFloat(Math.pow(parseFloat(base), parseFloat(exponent)).toFixed(decimal_accuracy));});
-        new_exp=new_exp.replace(/(\d+(\.\d+)?)\√(\d+(\.\d+)?)/g, (match, base, _, exponent) => {
-            return parseFloat(Math.pow(parseFloat(exponent), parseFloat(1/base)).toFixed(decimal_accuracy));});
+        new_exp = new_exp.replace(/(-?\d+(\.\d+)?)\^(-?\d+(\.\d+)?)/g, (match, base, _, exponent) => {
+            base = parseFloat(base);
+            exponent = parseFloat(exponent);
+        
+            // Handle cases where negative bases with non-integer exponents cause issues
+            if (base < 0 && !Number.isInteger(exponent)) {
+                return "Math Error!"; // Negative base raised to non-integer exponent results in complex number
+            }
+        
+            // Correctly handle cases like (-27)^0.33 (cube root of -27)
+            let result;
+            if (base < 0 && Number.isInteger(1 / exponent)) {
+                result = -Math.pow(-base, exponent); // Convert base to positive, compute, then negate
+            } else {
+                result = Math.pow(base, exponent);
+            }
+        
+            return parseFloat(result.toFixed(decimal_accuracy));
+        });        
+        
+        
+        new_exp = new_exp.replace(/(-?\d+(\.\d+)?)√(-?\d+(\.\d+)?)/g, (match, base, _, exponent) => {
+            base = parseFloat(base);  // Root (degree)
+            exponent = parseFloat(exponent); // Radicand (number under root)
+        
+            // Prevent zero as a root (0√x is undefined)
+            if (base === 0) {
+                return "Math Error!";
+            }
+        
+            // If the radicand (exponent) is negative and the root is even, return an error
+            if (exponent < 0 && base % 2 === 0) {
+                return "Math Error!"; // Even roots of negative numbers are not real
+            }
+        
+            // Correct handling of negative numbers for odd roots
+            let result;
+            if (exponent < 0) {
+                result = -Math.pow(-exponent, 1 / base); // Compute root on positive part, then negate
+            } else {
+                result = Math.pow(exponent, 1 / base);
+            }
+        
+            return parseFloat(result.toFixed(decimal_accuracy));
+        });        
     }
     
     fun_times=fun_count(new_exp,['sin','cos','tan','log'])
     for(let j=0;j<fun_times;j++)
     {
-        new_exp=new_exp.replace(/sin(\d+(\.\d+)?)/g, (match, num) => {
+        new_exp=new_exp.replace(/sin-?\d+(\.\d+)?/g, (match) => {
+            let num = match.replace("sin", "");
             return Math.sin(parseFloat(num) * (Math.PI / 180)).toFixed(decimal_accuracy); });
-        new_exp=new_exp.replace(/tan(\d+(\.\d+)?)/g, (match, num) => {
+
+        
+        new_exp=new_exp.replace(/tan-?\d+(\.\d+)?/g, (match) => {
+            let num = match.replace("tan", "");
             let radians = parseFloat(num) * (Math.PI / 180);
             let tanValue = Math.tan(radians);
         
@@ -58,86 +138,101 @@ function Evaluate(exp)
         
             return tanValue.toFixed(decimal_accuracy);
         });
-        new_exp=new_exp.replace(/cos(\d+(\.\d+)?)/g, (match, num) => {
-            return Math.cos(parseFloat(num) * (Math.PI / 180)).toFixed(decimal_accuracy); });
-        new_exp=new_exp.replace(/log(\d+(\.\d+)?)b(\d+(\.\d+)?)/g, (match, base, _, num) => {
-            base = parseFloat(base);
-            num = parseFloat(num);
-        
-            if (base <= 0 || base === 1 || num <= 0) 
-            {
-                document.getElementById('display').value="log undefined!"; // Logarithm is undefined for these cases
-                newTrue = true;
-                return;
-            }
-        
-            let logValue = Math.log(num) / Math.log(base);
-            return logValue.toFixed(decimal_accuracy);
+
+
+        new_exp = new_exp.replace(/cos-?\d+(\.\d+)?/g, (match) => {
+            let num = match.replace("cos", ""); // Remove 'cos' to extract the number
+            return Math.cos(parseFloat(num) * (Math.PI / 180)).toFixed(decimal_accuracy);
         });
+
+
+        if (/log(-?\d+(\.\d+)?)b(-?\d+(\.\d+)?)/.test(new_exp)) {
+            new_exp = new_exp.replace(/log(-?\d+(\.\d+)?)b(-?\d+(\.\d+)?)/g, (match, base, _, num) => {
+                base = parseFloat(base);
+                num = parseFloat(num);
+        
+                // Check for invalid logarithm cases
+                if (base <= 0 || base === 1 || num <= 0) {
+                    document.getElementById('display').value = "log undefined!"; // Display error
+                    newTrue = true;
+                    return match; // Return the original expression unchanged (prevents 'undefined')
+                }
+        
+                let logValue = Math.log(num) / Math.log(base);
+                return parseFloat(logValue.toFixed(decimal_accuracy));
+            });
+        
+            if(newTrue)
+                return; // **Stops execution immediately after handling logs**
+        }
+        
     }
 
     fun_times=fun_count(new_exp,['/','%'])
     for(let j=0;j<fun_times;j++)
     {
-        new_exp=new_exp.replace(/(\d+(\.\d+)?)\/(\d+(\.\d+)?)/g, (match, num1, _, num2) => {
+        new_exp = new_exp.replace(/(-?\d+(\.\d+)?)\/(-?\d+(\.\d+)?)/g, (match, num1, _, num2) => {
             num1 = parseFloat(num1);
             num2 = parseFloat(num2);
         
-            if (num2 === 0) 
-            {
-                document.getElementById('display').value="Division by 0!"; // Handling division by zero
+            if (num2 === 0) {
+                document.getElementById('display').value = "Division by 0!"; // Handling division by zero
                 newTrue = true;
-                return;
+                return match; // **Prevents "undefined" from appearing in new_exp**
             }
         
             let divValue = num1 / num2;
             return divValue.toFixed(decimal_accuracy);
         });
-        new_exp=new_exp.replace(/(\d+(\.\d+)?)\%(\d+(\.\d+)?)/g, (match, num1, _, num2) => {
+        
+        new_exp = new_exp.replace(/(-?\d+(\.\d+)?)\%(-?\d+(\.\d+)?)/g, (match, num1, _, num2) => {
             num1 = parseFloat(num1);
             num2 = parseFloat(num2);
         
-            if (num2 === 0) 
-            {
-                document.getElementById('display').value="Modulus by 0!"; // Handling division by zero
+            if (num2 === 0) {
+                document.getElementById('display').value = "Modulus by 0!"; // Handling modulus by zero
                 newTrue = true;
-                return;
+                return match; // **Prevents "undefined" from appearing in new_exp**
             }
+        
             let modValue = num1 % num2;
             return modValue.toFixed(decimal_accuracy);
         });
+        
     }
     
     fun_times=fun_count(new_exp,['*','x'])
     for(let j=0;j<fun_times;j++)
     {
-        new_exp=new_exp.replace(/(\d+(\.\d+)?)\x(\d+(\.\d+)?)/g, (match, num1, _, num2) => {
+        new_exp = new_exp.replace(/(-?\d+(\.\d+)?)\x(-?\d+(\.\d+)?)/g, (match, num1, _, num2) => {
             num1 = parseFloat(num1);
             num2 = parseFloat(num2);
         
             let mulValue = num1 * num2;
             return mulValue.toFixed(decimal_accuracy);
         });
-        new_exp=new_exp.replace(/(\d+(\.\d+)?)\*(\d+(\.\d+)?)/g, (match, num1, _, num2) => {
+        
+        new_exp = new_exp.replace(/(-?\d+(\.\d+)?)\*(-?\d+(\.\d+)?)/g, (match, num1, _, num2) => {
             num1 = parseFloat(num1);
             num2 = parseFloat(num2);
         
             let mulValue = num1 * num2;
             return mulValue.toFixed(decimal_accuracy);
         });
+        
     }
 
     fun_times=fun_count(new_exp,['+','-'])
     for(let j=0;j<fun_times;j++)
     {
-        new_exp=new_exp.replace(/(\d+(\.\d+)?)\+(\d+(\.\d+)?)/g, (match, num1, _, num2) => {
+        new_exp=new_exp.replace(/(-?\d+(\.\d+)?)\+(-?\d+(\.\d+)?)/g, (match, num1, _, num2) => {
             num1 = parseFloat(num1);
             num2 = parseFloat(num2);
         
             let sumValue = num1 + num2;
             return sumValue.toFixed(decimal_accuracy);
         });
-        new_exp=new_exp.replace(/(\d+(\.\d+)?)\-(\d+(\.\d+)?)/g, (match, num1, _, num2) => {
+        new_exp=new_exp.replace(/(-?\d+(\.\d+)?)\-\s*(-?\d+(\.\d+)?)/g, (match, num1, _, num2) => {
             num1 = parseFloat(num1);
             num2 = parseFloat(num2);
         
@@ -146,6 +241,7 @@ function Evaluate(exp)
         });
     }
 
+    newTrue=true;
     return(new_exp);
 }
 
@@ -208,7 +304,6 @@ function Solve()
             if(expression[i]=='(')
             {
                 brac_count++;
-                stack.push(i);
             }
             else if(expression[i]==')')
             {
@@ -230,7 +325,24 @@ function Solve()
         }
 
         //replacing e with Math.E
-        expression = expression.replace(/e/g, Math.E.toFixed(decimal_accuracy));
+        if(!newTrue)
+            expression = expression.replace(/e/g, Math.E.toFixed(decimal_accuracy));
+
+        //removing unnecessary + signs
+        expression=Rem_plus(expression);
+
+        //function to add x between )( except for log(...b)(..)
+        expression = Add_mul_brac(expression);
+
+        i=0;
+        while(i<expression.length)
+        {
+            if(expression[i]=='(')
+            {
+                stack.push(i);
+            }
+            i++;
+        }
 
         //evaluating expression
         i=stack[stack.length-1];
@@ -245,7 +357,7 @@ function Solve()
                     newTrue = true;
                     return;
                 }
-                expression=expression.replace(subpart,valpart);     
+                expression=expression.replace(subpart,valpart);   
                 stack.pop();
                 if(stack.length!=0)
                 {
@@ -259,14 +371,16 @@ function Solve()
             expression="("+expression+")"
             expression=Evaluate(expression);
             if(expression==undefined)
+            {
+                newTrue=true;
                 return;
+            }
         }while(Number(expression)==NaN)
 
 
         //printing expression
         document.getElementById('display').value = expression;
 
-        console.log(expression);
         newTrue = true;
     } catch {
         document.getElementById('display').value = 'Error';
