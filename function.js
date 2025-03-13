@@ -81,18 +81,17 @@ function Evaluate(exp)
             return parseFloat(result.toFixed(decimal_accuracy));
         });        
         
-        
         new_exp = new_exp.replace(/(-?\d+(\.\d+)?)√(-?\d+(\.\d+)?)/g, (match, base, _, exponent) => {
             base = parseFloat(base);  // Root (degree)
             exponent = parseFloat(exponent); // Radicand (number under root)
         
             // Prevent zero as a root (0√x is undefined)
-            if (base === 0) {
+            if (base == 0) {
                 return "Math Error!";
             }
         
             // If the radicand (exponent) is negative and the root is even, return an error
-            if (exponent < 0 && base % 2 === 0) {
+            if (exponent < 0 && base % 2 == 0) {
                 return "Math Error!"; // Even roots of negative numbers are not real
             }
         
@@ -113,7 +112,6 @@ function Evaluate(exp)
     fun_times=fun_count(new_exp,['sin','cos','tan','log'])
     for(let j=0;j<fun_times;j++)
     {
-
         new_exp=new_exp.replace(/sin-?\d+(\.\d+)?/g, (match) => {
             let num = match.replace("sin", "");
             return Math.sin(parseFloat(num) * (Math.PI / 180)).toFixed(decimal_accuracy); });
@@ -134,8 +132,6 @@ function Evaluate(exp)
         
             return tanValue.toFixed(decimal_accuracy);
         });
-        if (newTrue) return;
-
 
         new_exp = new_exp.replace(/cos-?\d+(\.\d+)?/g, (match) => {
             let num = match.replace("cos", ""); // Remove 'cos' to extract the number
@@ -149,7 +145,7 @@ function Evaluate(exp)
                 num = parseFloat(num);
             newTrue=false;
     
-                if (base <= 0 || base === 1 || num <= 0) {
+                if (base <= 0 || base == 1 || num <= 0) {
 
                     document.getElementById('display').value = "log undefined!";
                     newTrue = true;
@@ -166,22 +162,24 @@ function Evaluate(exp)
     }
 
     fun_times=fun_count(new_exp,['/','%'])
+    document.getElementById('display').value=fun_times;
     for(let j=0;j<fun_times;j++)
     {
         new_exp = new_exp.replace(/(-?\d+(\.\d+)?)\/(-?\d+(\.\d+)?)/g, (match, num1, _, num2) => {
             num1 = parseFloat(num1);
             num2 = parseFloat(num2);
-        
+            
+            newTrue=false;
             if (num2 == 0) {
                 document.getElementById('display').value = "Division by 0!"; // Handling division by zero
                 newTrue = true;
+
                 return match; // **Prevents "undefined" from appearing in new_exp**
             }
         
-            let divValue = num1 / num2;
+            let divValue = num1/num2;
             return divValue.toFixed(decimal_accuracy);
         });
-        if (newTrue) return;
         
         new_exp = new_exp.replace(/(-?\d+(\.\d+)?)\%(-?\d+(\.\d+)?)/g, (match, num1, _, num2) => {
             num1 = parseFloat(num1);
@@ -259,8 +257,6 @@ function Plus_add(exp)
 //function controlling main display
 function Display_d(value) 
 {
-    let display=document.getElementById('display');
-    
     if(newTrue) {
         Clear();
         newTrue = false;
