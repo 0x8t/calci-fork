@@ -112,12 +112,12 @@ function Evaluate(exp)
     fun_times=fun_count(new_exp,['sin','cos','tan','log'])
     for(let j=0;j<fun_times;j++)
     {
-        new_exp=new_exp.replace(/sin-?\d+(\.\d+)?/g, (match) => {
+        new_exp=new_exp.replace(/sin-?\d+(\.\d+)?/gi, (match) => {
             let num = match.replace("sin", "");
             return Math.sin(parseFloat(num) * (Math.PI / 180)).toFixed(decimal_accuracy); });
         
         
-        new_exp=new_exp.replace(/tan-?\d+(\.\d+)?/g, (match) => {
+        new_exp=new_exp.replace(/tan-?\d+(\.\d+)?/gi, (match) => {
             let num = match.replace("tan", "");
             let radians = parseFloat(num) * (Math.PI / 180);
             let tanValue = Math.tan(radians);
@@ -133,14 +133,14 @@ function Evaluate(exp)
             return tanValue.toFixed(decimal_accuracy);
         });
 
-        new_exp = new_exp.replace(/cos-?\d+(\.\d+)?/g, (match) => {
+        new_exp = new_exp.replace(/cos-?\d+(\.\d+)?/gi, (match) => {
             let num = match.replace("cos", ""); // Remove 'cos' to extract the number
             return Math.cos(parseFloat(num) * (Math.PI / 180)).toFixed(decimal_accuracy);
         });
 
 
         if (/log-?\d+(\.\d+)?b-?\d+(\.\d+)?/.test(new_exp)) {
-            new_exp = new_exp.replace(/log(-?\d+(\.\d+)?)b(-?\d+(\.\d+)?)/g, (match, base, _, num) => {
+            new_exp = new_exp.replace(/log(-?\d+(\.\d+)?)b(-?\d+(\.\d+)?)/gi, (match, base, _, num) => {
                 base = parseFloat(base);
                 num = parseFloat(num);
             newTrue=false;
