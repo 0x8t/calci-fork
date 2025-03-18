@@ -4,33 +4,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculator</title>
-    <link rel="stylesheet" href="style1.css">
+    <title>Calculation Engine</title>
+    <link rel="stylesheet" href="style.css">
     <link rel="icon" href="./calculator.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
 </head>
 
 <body>
-    <nav class="navbar">
-        <div class="navbar_container">
-            <a href="/" id="navbar_logo">Calculator</a>
-            <div class="navbar_toggle" id="mobile-menu">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
+    
+    <div id="navbar-placeholder"></div>
+    <div class="container">
+        <section class="hero-section">
+            <h1 class="hero-title">Javascript Based Calculation Engine</h1>
+            <p>From basic math to advanced trigonometric functions and interactive visualizations</p>
+            <div class="features">
+                <div class="feature-card">
+                    <i class="fas fa-calculator icon-accent"></i>
+                    <h3>Advanced Calculator</h3>
+                    <p>Perform basic arithmetic operations and common mathematical functions with ease. Perfect for everyday calculations.</p>
+                    <a href="normal_calc.html" class="button" style="margin-top: 20px; display: inline-block;">Try Now</a>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-chart-line" style="font-size: 3rem; color: var(--primary-color); margin-bottom: 20px;"></i>
+                    <h3>Function Plotter</h3>
+                    <p>Visualize mathematical functions with our interactive plotting tool. See how functions behave across different ranges.</p>
+                    <a href="trig_calc.html" class="button" style="margin-top: 20px; display: inline-block;">Try Now</a>
+                </div>
             </div>
-            <ul class="navbar_menu">
-                <li class="navbar_item">
-                    <a href="trig_calc.html" class="navbar_links">Trigonometric Calculator</a>
-                </li>
-                <li class = "navbar_item">
-                    <a href="normal_calc.html" class="navbar_links">Normal Calculator</a>
-                </li>
-                <li class="navbar_btn">
-                    <a href="info.html" class="button">Info</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+        </section>
+    </div>
+    
+    <footer>
+        <p>&copy; 2023 Advanced Calculator. All rights reserved.</p>
+    </footer>
+    
     <script src="app.js"></script>
 </body>
 

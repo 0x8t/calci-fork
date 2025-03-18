@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator Information</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="./calculator.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div id="navbar-placeholder"></div>
+    <div class="info-container">
+        <h1 class="hero-title">
+            <i class="fas fa-info-circle icon-accent"></i>
+            Calculator Functions & Features
+        </h1>
+        
+        <div class="info-card">
+            <h2><i class="fas fa-plus-minus" style="font-size: 1.2rem; margin-right: 10px;"></i> Basic Functions</h2>
+            <ul class="function-list">
+                <li><strong>Addition:</strong> Use the <span class="key">+</span> key to add numbers. Example: <span class="example">2 + 3 = 5</span></li>
+                <li><strong>Subtraction:</strong> Use the <span class="key">-</span> key to subtract numbers. Example: <span class="example">5 - 2 = 3</span></li>
+                <li><strong>Multiplication:</strong> Use the <span class="key">×</span> key to multiply numbers. Example: <span class="example">4 × 5 = 20</span></li>
+                <li><strong>Division:</strong> Use the <span class="key">÷</span> key to divide numbers. Example: <span class="example">10 ÷ 2 = 5</span></li>
+                <li><strong>Modulus:</strong> Use the <span class="key">%</span> key to find the remainder after division. Example: <span class="example">5 % 2 = 1</span></li>
+            </ul>
+        </div>
+        
+        <div class="info-card">
+            <h2><i class="fas fa-superscript" style="font-size: 1.2rem; margin-right: 10px;"></i> Advanced Functions</h2>
+            <ul class="function-list">
+                <li><strong>Square:</strong> Use <span class="key">x^2</span> to square a number. Example: <span class="example">5^2 = 25</span></li>
+                <li><strong>Power:</strong> Use <span class="key">x^y</span> to raise a number to any power. Example: <span class="example">2^3 = 8</span></li>
+                <li><strong>Square Root:</strong> Use <span class="key">2√y</span> to find the square root. Example: <span class="example">2√9 = 3</span></li>
+                <li><strong>Nth Root:</strong> Use <span class="key">x√y</span> to find any root. Example: <span class="example">3√27 = 3</span></li>
+                <li><strong>Logarithm:</strong> Use <span class="key">log_x(y)</span> to calculate logarithm with base x. Example: <span class="example">log_10(100) = 2</span></li>
+                <li><strong>Euler's Number:</strong> Use <span class="key">e</span> to represent Euler's number (approximately 2.71828).</li>
+            </ul>
+        </div>
+        
+        <div class="info-card">
+            <h2><i class="fas fa-square-root-alt" style="font-size: 1.2rem; margin-right: 10px;"></i> Trigonometric Functions</h2>
+            <ul class="function-list">
+                <li><strong>Sine:</strong> Use <span class="key">sin(x)</span> to calculate the sine of an angle in degrees. Example: <span class="example">sin(90) = 1</span></li>
+                <li><strong>Cosine:</strong> Use <span class="key">cos(x)</span> to calculate the cosine of an angle in degrees. Example: <span class="example">cos(0) = 1</span></li>
+                <li><strong>Tangent:</strong> Use <span class="key">tan(x)</span> to calculate the tangent of an angle in degrees. Example: <span class="example">tan(45) = 1</span></li>
+            </ul>
+        </div>
+        
+        <div class="info-card">
+            <h2><i class="fas fa-chart-line" style="font-size: 1.2rem; margin-right: 10px;"></i> Function Plotting</h2>
+            <p>In the Trigonometric Calculator section, you can plot mathematical functions:</p>
+            <ul class="function-list">
+                <li>Enter a function using the variable <span class="key">x</span> (e.g., <span class="example">sin(x)</span>, <span class="example">x^2</span>, <span class="example">2*x+1</span>)</li>
+                <li>Set the range for the x-axis using the range controls</li>
+                <li>Click the "Plot" button to visualize your function</li>
+                <li>The graph will update automatically to display your function</li>
+            </ul>
+        </div>
+        
+        <div class="info-card">
+            <h2><i class="fas fa-cog" style="font-size: 1.2rem; margin-right: 10px;"></i> Setting Decimal Accuracy</h2>
+            <p>You can set the number of decimal places displayed in your results:</p>
+            <ul class="function-list">
+                <li>Enter a number (1-10) in the "Decimal Accuracy" field</li>
+                <li>The calculator will round results to that many decimal places</li>
+                <li>Default accuracy is 2 decimal places</li>
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2023 Advanced Calculator. All rights reserved.</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

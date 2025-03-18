@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculation Engine</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="./calculator.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+</head>
+<body>    
+    <div id="navbar-placeholder"></div>
+    <div class="container" style="display: flex; justify-content: center; align-items: center; min-height: 80vh;">
+        <div class="calculate">
+            <h2 class="hero-title">
+                <i class="fas fa-calculator icon-accent"></i>
+                Advanced Calculator
+            </h2>
+            <input type="text" onkeydown="Enter(event)" class="display" id="display" placeholder="Input">
+            <div class="decimal-accuracy-container">
+                <label for="displayAccuracy">Decimal Accuracy</label>
+                <input type="text" class="displayAccuracy" autocomplete="off" id="displayAccuracy" placeholder=" ">
+            </div>
+            <div class="option">
+                <button onclick="Clear()">C</button>
+                <button onclick="Clear_char()">DEL</button>
+                <button class="operator" onclick="Display_d('(')">(</button>
+                <button class="operator" onclick="Display_d(')')">)</button>
+                
+                <button onclick="Display_d('7')">7</button>
+                <button onclick="Display_d('8')">8</button>
+                <button onclick="Display_d('9')">9</button>
+                <button class="operator" onclick="Display_d('/')">÷</button>
+                
+                <button onclick="Display_d('4')">4</button>
+                <button onclick="Display_d('5')">5</button>
+                <button onclick="Display_d('6')">6</button>
+                <button class="operator" onclick="Display_d('x')">×</button>
+                
+                <button onclick="Display_d('1')">1</button>
+                <button onclick="Display_d('2')">2</button>
+                <button onclick="Display_d('3')">3</button>
+                <button class="operator" onclick="Display_d('-')">-</button>
+                
+                <button onclick="Display_d('0')">0</button>
+                <button onclick="Display_d('.')">.</button>
+                <button onclick="Display_d('e')">e</button>
+                <button class="operator" onclick="Display_d('+')">+</button>
+                
+                <button class="operator" onclick="Display_d('sin()')">sin</button>
+                <button class="operator" onclick="Display_d('cos()')">cos</button>
+                <button class="operator" onclick="Display_d('tan()')">tan</button>
+                <button class="operator" onclick="Display_d('%')">%</button>
+                
+                <button class="operator" onclick="Display_d('()^(2)')">x<sup>2</sup></button>
+                <button class="operator" onclick="Display_d('()^')">x<sup>y</sup></button>
+                <button class="operator" onclick="Display_d('(2)√')"><sup>2</sup>√y</button>
+                <button class="operator" onclick="Display_d('()√')"><sup>x</sup>√y</button>
+                
+                <button class="operator" onclick="Display_d('log(b)()')">log<sub>x</sub>y</button>
+                <button class="operator_equal" onclick="Solve()">=</button>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2023 Advanced Calculator. All rights reserved.</p>
+    </footer>
+    
+    <script src="function.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

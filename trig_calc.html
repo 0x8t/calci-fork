@@ -3,9 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Function Plotter</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="./calculator.png">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    
+    <div id="navbar-placeholder"></div>
+
+    <div class="calculator-container">
+        <h1 class="hero-title">
+            <i class="fas fa-square-root-alt icon-accent"></i>
+            Function Plotter
+        </h1>
+            <div class="plot-container">
+                <div class="control-panel">
+                    <div class="input-group">
+                        <label for="functionInput">Function to Plot</label>
+                        <input type="text" id="functionInput" placeholder="e.g., sin(x)" value="sin(x)">
+                    </div>
+                    <div class="input-group">
+                        <label for="rangeStart">Domain Start</label>
+                        <input type="number" id="rangeStart" value="-10" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="rangeEnd">Domain End</label>
+                        <input type="number" id="rangeEnd" value="10" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="angleUnit">Angle Unit</label>
+                        <select id="angleUnit" class="angle-select">
+                            <option value="rad">Radians</option>
+                            <option value="deg">Degrees</option>
+                        </select>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="plotFunction()">
+                            <i class="fas fa-chart-line" style="margin-right: 5px;"></i> Plot
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="chart-wrapper">
+                    <canvas id="functionPlot"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2023 Advanced Calculator. All rights reserved.</p>
+    </footer>
+
+    <script src="function.js"></script>
+    <script src="app.js"></script>
+    <script>
+        // Chart.js configuration
+        let chartInstance = null;
+        
+        function plotFunction() {
+            const functionInput = document.getElementById('functionInput').value;
+            const rangeStart = parseFloat(document.getElementById('rangeStart').value);
+            const rangeEnd = parseFloat(document.getElementById('rangeEnd').value);
+            const isDegreesMode = document.getElementById('angleUnit').value === 'deg';
+            
+            if (!functionInput) {
+                alert('Please enter a function to plot');
+                return;
+            }
+            
+            // Generate data points with higher resolution
+            const points = [];
+            const labels = [];
+            // Increase number of points for better resolution
+            const numPoints = 500;
+            const step = (rangeEnd - rangeStart) / numPoints;
+            
+            try {
+                for (let x = rangeStart; x <= rangeEnd; x += step) {
+                    // Create a proper expression for evaluation
+                    let expression = functionInput;
+                    
+                    // Replace π with Math.PI
+                    expression = expression.replace(/π/g, "Math.PI");
+                    
+                    // Replace trig functions for calculation with radian conversion if needed
+                    if (isDegreesMode) {
+                        // Handle complex arguments first
+                        expression = expression.replace(/sin\((.*?)\)/g, (match, p1) => `Math.sin((${p1}) * Math.PI / 180)`);
+                        expression = expression.replace(/cos\((.*?)\)/g, (match, p1) => `Math.cos((${p1}) * Math.PI / 180)`);
+                        expression = expression.replace(/tan\((.*?)\)/g, (match, p1) => `Math.tan((${p1}) * Math.PI / 180)`);
+                    } else {
+                        expression = expression.replace(/sin\(/g, "Math.sin(");
+                        expression = expression.replace(/cos\(/g, "Math.cos(");
+                        expression = expression.replace(/tan\(/g, "Math.tan(");
+                    }
+                    
+                    expression = expression.replace(/log\(/g, "Math.log10(");
+                    expression = expression.replace(/ln\(/g, "Math.log(");
+                    
+                    // Handle implicit multiplication like 2x (add * between number and x)
+                    expression = expression.replace(/(\d)x/g, "$1*x");
+                    
+                    // Finally replace remaining x with its value
+                    expression = expression.replace(/x/g, x);
+                    
+                    // Calculate y value
+                    let y;
+                    try {
+                        y = eval(expression);
+                        // Only add points if y is finite and within reasonable bounds
+                        if (isFinite(y) && Math.abs(y) <= 100) {
+                            points.push({x, y});
+                            labels.push(x.toFixed(1));
+                        }
+                    } catch (e) {
+                        console.error('Error evaluating expression:', e);
+                    }
+                }
+                
+                // Create or update chart
+                const ctx = document.getElementById('functionPlot').getContext('2d');
+                
+                if (chartInstance) {
+                    chartInstance.destroy();
+                }
+                
+                chartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: functionInput + (isDegreesMode ? ' (degrees)' : ' (radians)'),
+                            data: points,
+                            borderColor: '#0070f3',
+                            backgroundColor: 'rgba(0, 112, 243, 0.1)',
+                            borderWidth: 3,
+                            pointRadius: 0,
+                            tension: 0.1,
+                            spanGaps: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                type: 'linear',
+                                position: 'center',
+                                title: {
+                                    display: true,
+                                    text: 'x',
+                                    color: '#fff'
+                                },
+                                min: rangeStart,
+                                max: rangeEnd,
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: '#fff'
+                                }
+                            },
+                            y: {
+                                type: 'linear',
+                                position: 'center',
+                                title: {
+                                    display: true,
+                                    text: 'y',
+                                    color: '#fff'
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: '#fff'
+                                },
+                                beginAtZero: false
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: '#fff'
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error plotting function:', error);
+                alert('Error plotting function. Please check your input.');
+            }
+        }
+        
+        // Initialize with default plot
+        window.onload = function() {
+            plotFunction();
+        };
+        
+        // Handle mobile menu
+        const menu = document.querySelector('#mobile-menu');
+        const menuLinks = document.querySelector('.navbar_menu');
+
+        menu.addEventListener('click', function() {
+            menu.classList.toggle('is-active');
+            menuLinks.classList.toggle('active');
+        });
+    </script>
 </body>
 </html>
